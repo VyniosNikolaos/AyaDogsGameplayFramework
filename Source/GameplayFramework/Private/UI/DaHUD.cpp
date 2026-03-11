@@ -110,7 +110,7 @@ void ADaHUD::InitOverlay(APlayerController* PC, APlayerState* PS, UDaAbilitySyst
 	{
 		RootLayout->PushWidgetToLayerStack<UDaUserWidgetBase>(CoreGameplayTags::TAG_UI_Layer_Game, OverlayWidgetClassToLoad, [this](UDaUserWidgetBase& Widget)
 		{
-				OverlayWidget = Widget;
+				OverlayWidget = &Widget;
 				OverlayWidget->SetWidgetController(OverlayWidgetController);
 				OverlayWidgetController->BroadcastInitialValues();
 		});

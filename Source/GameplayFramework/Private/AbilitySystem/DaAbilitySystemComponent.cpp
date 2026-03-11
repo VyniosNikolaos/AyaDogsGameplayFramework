@@ -46,7 +46,8 @@ void UDaAbilitySystemComponent::ClearAbilitySets()
 void UDaAbilitySystemComponent::AbilityInputTagPressed(const FInputActionValue& Value, const FGameplayTag& InputTag)
 {
 	if (!InputTag.IsValid()) return;
-	
+
+	ABILITYLIST_SCOPE_LOCK();
 	for (auto& AbilitySpec: GetActivatableAbilities())
 	{
 		if (AbilitySpec.GetDynamicSpecSourceTags().HasTagExact(InputTag))
@@ -69,6 +70,7 @@ void UDaAbilitySystemComponent::AbilityInputTagHeld(const FGameplayTag InputTag)
 {
 	if (!InputTag.IsValid()) return;
 
+	ABILITYLIST_SCOPE_LOCK();
 	for (auto& AbilitySpec: GetActivatableAbilities())
 	{
 		if (AbilitySpec.GetDynamicSpecSourceTags().HasTagExact(InputTag))
@@ -86,6 +88,7 @@ void UDaAbilitySystemComponent::AbilityInputTagReleased(const FGameplayTag Input
 {
 	if (!InputTag.IsValid()) return;
 
+	ABILITYLIST_SCOPE_LOCK();
 	for (auto& AbilitySpec: GetActivatableAbilities())
 	{
 		if (AbilitySpec.GetDynamicSpecSourceTags().HasTagExact(InputTag)  && AbilitySpec.IsActive())

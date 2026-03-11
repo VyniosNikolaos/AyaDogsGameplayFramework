@@ -358,7 +358,7 @@ FBoxSphereBounds UDaInspectableComponent::GetHierarchyBounds(USceneComponent* Ro
 	if (!RootComponent)
 		return FBoxSphereBounds(FVector::ZeroVector, FVector::ZeroVector, 0.0f);
 
-	FBoxSphereBounds CombinedBounds;
+	FBoxSphereBounds CombinedBounds(FVector::ZeroVector, FVector::ZeroVector, 0.0f);
 	bool bFirstValidBounds = true;
 
 	// Get all child components (including nested children)

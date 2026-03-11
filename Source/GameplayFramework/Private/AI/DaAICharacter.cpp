@@ -14,7 +14,8 @@
 #include "Blueprint/UserWidget.h"
 #include "DaAttributeComponent.h"
 #include "TimerManager.h"
-#include "Perception/PawnSensingComponent.h"
+#include "Perception/AIPerceptionComponent.h"
+#include "Perception/AISenseConfig_Sight.h"
 #include "UI/DaWorldUserWidget.h"
 
 
@@ -23,7 +24,17 @@ ADaAICharacter::ADaAICharacter()
 {
 	CharacterTypeGameplayTag = CoreGameplayTags::TAG_Character_Type_AI;
 	
-	PawnSensingComp = CreateDefaultSubobject<UPawnSensingComponent>("PawnSensingComp");
+	AIPerceptionComp = CreateDefaultSubobject<UAIPerceptionComponent>("AIPerceptionComp");
+
+	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>("SightConfig");
+	SightConfig->SightRadius = 3000.0f;
+	SightConfig->LoseSightRadius = 3500.0f;
+	SightConfig->PeripheralVisionAngleDegrees = 90.0f;
+	SightConfig->DetectionByAffiliation.bDetectEnemies = true;
+	SightConfig->DetectionByAffiliation.bDetectNeutrals = true;
+	SightConfig->DetectionByAffiliation.bDetectFriendlies = false;
+	AIPerceptionComp->ConfigureSense(*SightConfig);
+	AIPerceptionComp->SetDominantSense(UAISense_Sight::StaticClass());
 	
 	AbilitySystemComponent = CreateDefaultSubobject<UDaAbilitySystemComponent>(TEXT("AbilityComp"));
 	AbilitySystemComponent->SetIsReplicated(true);
@@ -44,7 +55,7 @@ void ADaAICharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 	
-	PawnSensingComp->OnSeePawn.AddDynamic(this, &ADaAICharacter::OnPawnSeen);
+	AIPerceptionComp->OnTargetPerceptionUpdated.AddDynamic(this, &ADaAICharacter::OnTargetPerceptionUpdated);
 }
 
 void ADaAICharacter::InitAbilitySystem()
@@ -63,6 +74,15 @@ void ADaAICharacter::InitAbilitySystem()
 int32 ADaAICharacter::GetCharacterLevel()
 {
 	return Level;
+}
+
+void ADaAICharacter::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
+{
+	APawn* Pawn = Cast<APawn>(Actor);
+	if (Pawn && Stimulus.WasSuccessfullySensed())
+	{
+		OnPawnSeen(Pawn);
+	}
 }
 
 void ADaAICharacter::OnPawnSeen(APawn* Pawn)

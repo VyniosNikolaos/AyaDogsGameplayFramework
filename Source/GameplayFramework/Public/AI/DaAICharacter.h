@@ -3,12 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Perception/AIPerceptionTypes.h"
 #include "DaCharacterBase.h"
 #include "DaAICharacter.generated.h"
 
 class UDaAbilitySystemComponent;
 class UDaAttributeComponent;
-class UPawnSensingComponent;
+class UAIPerceptionComponent;
+class UAISenseConfig_Sight;
 class UUserWidget;
 class UDaWorldUserWidget;
 
@@ -26,7 +28,10 @@ public:
 protected:
 
 	UPROPERTY(VisibleAnywhere, Category="Components")
-	TObjectPtr<UPawnSensingComponent> PawnSensingComp;
+	TObjectPtr<UAIPerceptionComponent> AIPerceptionComp;
+
+	UPROPERTY()
+	TObjectPtr<UAISenseConfig_Sight> SightConfig;
 
 	UPROPERTY(VisibleDefaultsOnly, Category="UI")
 	TObjectPtr<UDaWorldUserWidget> PlayerSeenWidget;
@@ -53,6 +58,8 @@ protected:
 	virtual int32 GetCharacterLevel() override;
 	
 	UFUNCTION()
+	void OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus);
+
 	void OnPawnSeen(APawn* Pawn);
 
 	UFUNCTION(NetMulticast, Unreliable)
